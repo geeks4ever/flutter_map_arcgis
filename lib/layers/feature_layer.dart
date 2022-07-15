@@ -13,7 +13,7 @@ import 'dart:async';
 class FeatureLayer extends StatefulWidget {
   final FeatureLayerOptions options;
   final MapState map;
-  final Stream<Null> stream;
+  final Stream<void> stream;
 
   FeatureLayer(this.options, this.map, this.stream);
 
@@ -36,12 +36,10 @@ class _FeatureLayerState extends State<FeatureLayer> {
   Tuple2<double, double>? _wrapY;
   double? _tileZoom;
 
-   Bounds? _globalTileRange;
-   LatLngBounds? currentBounds;
+  Bounds? _globalTileRange;
+  LatLngBounds? currentBounds;
   int activeRequests = 0;
   int targetRequests = 0;
-
-
 
   @override
   initState() {
@@ -252,9 +250,11 @@ class _FeatureLayerState extends State<FeatureLayer> {
 
   void requestFeatures(LatLngBounds bounds) async {
     try {
-      String bounds_ = '"xmin":${bounds.southWest!.longitude},"ymin":${bounds.southWest!.latitude},"xmax":${bounds.northEast!.longitude},"ymax":${bounds.northEast?.latitude}';
+      String bounds_ =
+          '"xmin":${bounds.southWest!.longitude},"ymin":${bounds.southWest!.latitude},"xmax":${bounds.northEast!.longitude},"ymax":${bounds.northEast?.latitude}';
 
-      String url = '${widget.options.url}/query?f=json&geometry={"spatialReference":{"wkid":4326},$bounds_}&maxRecordCountFactor=30&outFields=*&outSR=4326&resultType=tile&returnExceededLimitFeatures=false&spatialRel=esriSpatialRelIntersects&where=1=1&geometryType=esriGeometryEnvelope';
+      String url =
+          '${widget.options.url}/query?f=json&geometry={"spatialReference":{"wkid":4326},$bounds_}&maxRecordCountFactor=30&outFields=*&outSR=4326&resultType=tile&returnExceededLimitFeatures=false&spatialRel=esriSpatialRelIntersects&where=1=1&geometryType=esriGeometryEnvelope';
 
       Response response = await Dio().get(url);
 
@@ -381,7 +381,6 @@ class _FeatureLayerState extends State<FeatureLayer> {
           );
         },
       );
-
     }
   }
 
@@ -434,7 +433,9 @@ class _FeatureLayerState extends State<FeatureLayer> {
 
           for (var point in polygon.points) {
             var pos = widget.map.project(point);
-            pos = pos.multiplyBy(widget.map.getZoomScale(widget.map.zoom, widget.map.zoom)) - widget.map.getPixelOrigin();
+            pos = pos.multiplyBy(
+                    widget.map.getZoomScale(widget.map.zoom, widget.map.zoom)) -
+                widget.map.getPixelOrigin();
             polygon.offsets.add(Offset(pos.x.toDouble(), pos.y.toDouble()));
             if (i > 0 && i < polygon.points.length) {
               polygon.offsets.add(Offset(pos.x.toDouble(), pos.y.toDouble()));
@@ -499,7 +500,7 @@ class PolygonEsri extends Polygon {
     this.borderColor = const Color(0xFFFFFF00),
     this.isDotted = false,
     this.attributes,
-  }) : super(points: points){
+  }) : super(points: points) {
     boundingBox = LatLngBounds.fromPoints(points);
   }
 }
@@ -507,7 +508,8 @@ class PolygonEsri extends Polygon {
 bool _pointInPolygon(LatLng position, List<LatLng> points) {
   // Check if the point sits exactly on a vertex
   // var vertexPosition = points.firstWhere((point) => point == position, orElse: () => null);
-  LatLng? vertexPosition = points.firstWhereOrNull((point) => point == position);
+  LatLng? vertexPosition =
+      points.firstWhereOrNull((point) => point == position);
   if (vertexPosition != null) {
     return true;
   }
